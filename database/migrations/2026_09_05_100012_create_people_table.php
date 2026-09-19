@@ -15,6 +15,9 @@ return new class extends Migration
             $table->string('document_number', 25)->unique();
             $table->string('email', 150);
             $table->unsignedInteger('current_pets_count')->default(0);
+            $table->string('estado_civil', 50);
+            $table->unsignedTinyInteger('cantidad_hijos');
+            $table->foreignId('occupation_id')->constrained('occupations')->noActionOnDelete();
             $table->foreignId('residence_id')->constrained('residences')->noActionOnDelete();
             $table->integer('income');
             $table->timestamps();

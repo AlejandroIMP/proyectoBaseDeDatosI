@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('donors', function (Blueprint $table) {
             $table->id();
             $table->string('name', 100);
+            $table->foreignId('person_id')->constrained('people')->noActionOnDelete();
             $table->timestamps();
         });
     }

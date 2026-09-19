@@ -1,0 +1,190 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="ERD - Pet Adoption System" id="erd-adoptions">
+    <mxGraphModel dx="3142" dy="1644" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="tbl_users" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" value="&lt;b&gt;users&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;name varchar(255)&lt;br&gt;email varchar(255) (UNIQUE)&lt;br&gt;&lt;font color=&quot;#666666&quot;&gt;email_verified_at (NULL)&lt;/font&gt;&lt;br&gt;password&lt;br&gt;&lt;font color=&quot;#666666&quot;&gt;remember_token (NULL)&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size:9px&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="156" width="220" x="860" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_species" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" value="&lt;b&gt;species&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;name varchar(50)&lt;br&gt;description varchar(50)&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size:9px&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="96" width="220" x="1200" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_colors" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" value="&lt;b&gt;colors&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;&lt;font color=&quot;#666666&quot;&gt;hex_color varchar(10) (NULL)&lt;/font&gt;&lt;br&gt;name varchar(50)&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size:9px&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="96" width="220" x="1910" y="495" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_pet_statuses" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" value="&lt;b&gt;pet_statuses&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;name varchar(50)&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size:9px&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="76" width="220" x="1910" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_shelters" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" value="&lt;b&gt;shelters&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;name varchar(50)&lt;br&gt;address varchar(150)&lt;br&gt;&lt;font color=&quot;#666666&quot;&gt;phone varchar(150) (NULL)&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#666666&quot;&gt;email varchar(150) (NULL)&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size:9px&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="136" width="220" x="1230" y="1076" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_residences" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;" value="&lt;b&gt;residences&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;&lt;font color=&quot;#666666&quot;&gt;name varchar(50) (NULL)&lt;/font&gt;&lt;br&gt;animal_limit smallint&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size:9px&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="96" width="220" x="810" y="1180" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_adoption_statuses" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" value="&lt;b&gt;adoption_statuses&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;name varchar(50)&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size:9px&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="76" width="220" x="540" y="1080" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_roles" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" value="&lt;b&gt;roles&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;name varchar(50) (UNIQUE)&lt;br&gt;&lt;font color=&quot;#666666&quot;&gt;description varchar(100) (NULL)&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size:9px&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="96" width="220" x="320" y="174" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_permissions" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" value="&lt;b&gt;permissions&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;name varchar(50) (UNIQUE)&lt;br&gt;&lt;font color=&quot;#666666&quot;&gt;description varchar(100) (NULL)&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size:9px&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="96" width="220" x="640" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_treatment_types" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" value="&lt;b&gt;treatment_types&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;name varchar(50)&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size:9px&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="76" width="220" x="2190" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_donors" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" value="&lt;b&gt;donors&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;&lt;div&gt;name varchar(100)&lt;/div&gt;&lt;div&gt;people_id&amp;nbsp;&lt;/div&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size: 9px; color: light-dark(rgb(153, 153, 153), rgb(106, 106, 106));&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="76" width="220" x="2190" y="1340" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_breeds" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" value="&lt;b&gt;breeds&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;species_id (FK &amp;rarr; species)&lt;br&gt;name varchar(50)&lt;br&gt;description varchar(50)&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size:9px&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="116" width="220" x="1330" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_people" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" value="&lt;b&gt;people&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;name varchar(50)&lt;br&gt;document_type enum(DPI,PASSPORT)&lt;br&gt;document_number varchar(25) (UNIQUE)&lt;br&gt;email varchar(150)&lt;br&gt;&lt;div&gt;current_pets_count int = 0&lt;/div&gt;&lt;div&gt;estado_civil varchar&lt;/div&gt;&lt;div&gt;cantidad_hijos int(2)&amp;nbsp;&lt;/div&gt;&lt;div&gt;it_trabajo&lt;/div&gt;residence_id (FK → residences)&lt;br&gt;income int&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size: 9px;&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="196" width="220" x="800" y="1360" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_permission_role" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" value="&lt;b&gt;permission_role&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;role_id&lt;/b&gt;&lt;/u&gt; (PK, FK &amp;rarr; roles)&lt;br&gt;&lt;u&gt;&lt;b&gt;permission_id&lt;/b&gt;&lt;/u&gt; (PK, FK &amp;rarr; permissions)&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size:9px&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="76" width="220" x="410" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_role_user" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" value="&lt;b&gt;role_user&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;user_id&lt;/b&gt;&lt;/u&gt; (PK, FK &amp;rarr; users)&lt;br&gt;&lt;u&gt;&lt;b&gt;role_id&lt;/b&gt;&lt;/u&gt; (PK, FK &amp;rarr; roles)&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size:9px&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="76" width="220" x="410" y="317" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_treatments" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" value="&lt;b&gt;treatments&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;name varchar(100)&lt;br&gt;requires_veterinarian bool&lt;br&gt;cost decimal(8,2)&lt;br&gt;treatment_type_id (FK &amp;rarr; treatment_types)&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size:9px&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="136" width="220" x="1910" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_pets" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" value="&lt;b&gt;pets&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;name varchar(50)&lt;br&gt;species_id (FK &amp;rarr; species)&lt;br&gt;breed_id (FK &amp;rarr; breeds)&lt;br&gt;sex char(1)&lt;br&gt;birth_date date&lt;br&gt;&lt;font color=&quot;#666666&quot;&gt;estimated_age smallint (NULL)&lt;/font&gt;&lt;br&gt;color_id (FK &amp;rarr; colors)&lt;br&gt;&lt;font color=&quot;#666666&quot;&gt;weight_kg decimal(5,2) (NULL)&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#666666&quot;&gt;notes text (NULL)&lt;/font&gt;&lt;br&gt;pet_status_id (FK &amp;rarr; pet_statuses)&lt;br&gt;registered_at date&lt;br&gt;status enum(active,inactive) = active&lt;br&gt;shelter_id (FK &amp;rarr; shelters)&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size:9px&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="316" width="220" x="1510" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_pet_histories" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" value="&lt;b&gt;pet_histories&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;pet_id (FK &amp;rarr; pets)&lt;br&gt;pet_status_id (FK &amp;rarr; pet_statuses)&lt;br&gt;notes text&lt;br&gt;recorded_at date&lt;br&gt;user_id (FK &amp;rarr; users)&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size:9px&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="156" width="220" x="1230" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_pet_treatments" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" value="&lt;b&gt;pet_treatments&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;pet_id (FK &amp;rarr; pets)&lt;br&gt;treatment_id (FK &amp;rarr; treatments)&lt;br&gt;instructions text&lt;br&gt;treated_at date&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size:9px&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="136" width="220" x="2190" y="944" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_appointments" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" value="&lt;b&gt;appointments&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;pet_id (FK → pets)&lt;br&gt;appointment_date date&lt;br&gt;&lt;font color=&quot;#666666&quot;&gt;notes text (NULL)&lt;/font&gt;&lt;br&gt;&lt;div&gt;status enum(pending,completed,missed) = pending&lt;/div&gt;&lt;div&gt;tipo_cita&lt;/div&gt;&lt;div&gt;persona_id&lt;/div&gt;&lt;div&gt;user_id&lt;/div&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size: 9px;&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="136" width="220" x="1790" y="1130" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_donations" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" value="&lt;b&gt;donations&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;donor_id (FK &amp;rarr; donors)&lt;br&gt;amount decimal(10,2)&lt;br&gt;contribution_type enum(cash,transfer,in_kind)&lt;br&gt;pet_id (FK &amp;rarr; pets, NULL)&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size:9px&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="136" width="220" x="2190" y="1140" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_rescues" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" value="&lt;b&gt;rescues&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;user_id (FK &amp;rarr; users)&lt;br&gt;pet_id (FK &amp;rarr; pets)&lt;br&gt;&lt;font color=&quot;#666666&quot;&gt;notes text (NULL)&lt;/font&gt;&lt;br&gt;pet_status_id (FK &amp;rarr; pet_statuses)&lt;br&gt;rescued_at date&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size:9px&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="156" width="220" x="1220" y="465" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_adoptions" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" value="&lt;b&gt;adoptions&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;pet_id (FK &amp;rarr; pets)&lt;br&gt;person_id (FK &amp;rarr; people)&lt;br&gt;requested_at date&lt;br&gt;&lt;font color=&quot;#666666&quot;&gt;approved_at date (NULL)&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#666666&quot;&gt;delivered_at date (NULL)&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#666666&quot;&gt;notes text (NULL)&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#666666&quot;&gt;document varchar(255) (NULL)&lt;/font&gt;&lt;br&gt;adoption_status_id (FK &amp;rarr; adoption_statuses)&lt;br&gt;user_id (FK &amp;rarr; users)&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size:9px&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="236" width="220" x="840" y="621" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_adoption_follow_ups" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" value="&lt;b&gt;adoption_follow_ups&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;adoption_id (FK &amp;rarr; adoptions)&lt;br&gt;followed_at date&lt;br&gt;notes text&lt;br&gt;user_id (FK &amp;rarr; users)&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size:9px&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="136" width="220" x="400" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="tbl_contracts" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" value="&lt;b&gt;contracts&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;user_id (FK &amp;rarr; users)&lt;br&gt;adoption_id (FK &amp;rarr; adoptions)&lt;br&gt;name varchar(100)&lt;br&gt;&lt;font color=&quot;#666666&quot;&gt;document_path varchar(255) (NULL)&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size:9px&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="136" width="220" x="380" y="896" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_1" edge="1" parent="1" source="tbl_breeds" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_species">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_2" edge="1" parent="1" source="tbl_people" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_residences">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_3" edge="1" parent="1" source="tbl_permission_role" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_roles">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_4" edge="1" parent="1" source="tbl_permission_role" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_permissions">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_5" edge="1" parent="1" source="tbl_role_user" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_users">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_6" edge="1" parent="1" source="tbl_role_user" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_roles">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_7" edge="1" parent="1" source="tbl_treatments" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_treatment_types">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_8" edge="1" parent="1" source="tbl_pets" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_species">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_9" edge="1" parent="1" source="tbl_pets" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_breeds">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_10" edge="1" parent="1" source="tbl_pets" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_colors">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_11" edge="1" parent="1" source="tbl_pets" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_pet_statuses">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_12" edge="1" parent="1" source="tbl_pets" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_shelters">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_13" edge="1" parent="1" source="tbl_pet_histories" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_pets">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_14" edge="1" parent="1" source="tbl_pet_histories" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_pet_statuses">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_15" edge="1" parent="1" source="tbl_pet_histories" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_users">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_16" edge="1" parent="1" source="tbl_pet_treatments" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_pets">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_17" edge="1" parent="1" source="tbl_pet_treatments" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_treatments">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_18" edge="1" parent="1" source="tbl_appointments" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_pets">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_19" edge="1" parent="1" source="tbl_donations" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_donors">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_20" edge="1" parent="1" source="tbl_donations" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_pets">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_21" edge="1" parent="1" source="tbl_rescues" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_users">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_22" edge="1" parent="1" source="tbl_rescues" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_pets">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_23" edge="1" parent="1" source="tbl_rescues" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_pet_statuses">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_24" edge="1" parent="1" source="tbl_adoptions" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_pets">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_25" edge="1" parent="1" source="tbl_adoptions" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_people">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_26" edge="1" parent="1" source="tbl_adoptions" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_adoption_statuses">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_27" edge="1" parent="1" source="tbl_adoptions" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_users">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_28" edge="1" parent="1" source="tbl_adoption_follow_ups" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_adoptions">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_29" edge="1" parent="1" source="tbl_adoption_follow_ups" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_users">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_30" edge="1" parent="1" source="tbl_contracts" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_users">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_31" edge="1" parent="1" source="tbl_contracts" style="edgeStyle=entityRelationEdgeStyle;rounded=0;html=1;startArrow=ERmany;startFill=0;endArrow=ERone;endFill=0;fontSize=9;" target="tbl_adoptions">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="QVd3fJvf2FuYCA5EUyBY-3" edge="1" parent="1" source="QVd3fJvf2FuYCA5EUyBY-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="tbl_people">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="QVd3fJvf2FuYCA5EUyBY-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" value="&lt;b&gt;jobs&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;name varchar(50)&lt;br&gt;&lt;div&gt;formalidad&lt;/div&gt;&lt;div&gt;horarios&lt;/div&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size: 9px;&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="196" width="220" x="510" y="1340" as="geometry" />
+        </mxCell>
+        <mxCell id="QVd3fJvf2FuYCA5EUyBY-4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=6;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" value="&lt;b&gt;appointments_types&lt;/b&gt;&lt;br&gt;&lt;u&gt;&lt;b&gt;id&lt;/b&gt;&lt;/u&gt; (PK)&lt;br&gt;name VARCHAR()&lt;br&gt;&lt;font color=&quot;#999999&quot; style=&quot;font-size: 9px;&quot;&gt;created_at / updated_at&lt;/font&gt;" vertex="1">
+          <mxGeometry height="136" width="220" x="1600" y="1310" as="geometry" />
+        </mxCell>
+        <mxCell id="QVd3fJvf2FuYCA5EUyBY-5" edge="1" parent="1" source="tbl_appointments" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" target="QVd3fJvf2FuYCA5EUyBY-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

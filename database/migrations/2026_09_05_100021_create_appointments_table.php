@@ -14,6 +14,9 @@ return new class extends Migration
             $table->date('appointment_date');
             $table->text('notes')->nullable();
             $table->enum('status', ['pending', 'completed', 'missed'])->default('pending');
+            $table->foreignId('appointment_type_id')->constrained('appointment_types')->noActionOnDelete();
+            $table->foreignId('person_id')->constrained('people')->noActionOnDelete();
+            $table->foreignId('user_id')->constrained('users')->noActionOnDelete();
             $table->timestamps();
         });
     }
