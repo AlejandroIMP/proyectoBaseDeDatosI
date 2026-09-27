@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -15,11 +14,42 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->call([
+            // Catálogos sin dependencias
+            SpeciesSeeder::class,
+            ColorSeeder::class,
+            PetStatusSeeder::class,
+            ShelterSeeder::class,
+            ResidenceSeeder::class,
+            AdoptionStatusSeeder::class,
+            RoleSeeder::class,
+            PermissionSeeder::class,
+            TreatmentTypeSeeder::class,
+            OccupationSeeder::class,
+            AppointmentTypeSeeder::class,
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            // Catálogos con dependencias simples
+            BreedSeeder::class,
+            TreatmentSeeder::class,
+            PermissionRoleSeeder::class,
+
+            // Usuarios y personas
+            UserSeeder::class,
+            PersonSeeder::class,
+            DonorSeeder::class,
+
+            // Mascotas y su información asociada
+            PetSeeder::class,
+            PetHistorySeeder::class,
+            PetTreatmentSeeder::class,
+
+            // Procesos operativos
+            AppointmentSeeder::class,
+            RescueSeeder::class,
+            AdoptionSeeder::class,
+            AdoptionFollowUpSeeder::class,
+            DonationSeeder::class,
+            ContractSeeder::class,
         ]);
     }
 }
