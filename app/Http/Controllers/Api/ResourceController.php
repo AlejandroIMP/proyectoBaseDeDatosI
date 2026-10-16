@@ -33,6 +33,24 @@ abstract class ResourceController extends Controller
         return [];
     }
 
+    /**
+     * Exposes the validation rules so the Livewire views reuse the same source of truth as the API.
+     *
+     * @return array<string, array<int, mixed>>
+     */
+    public function validationRules(Request $request, ?Model $record): array
+    {
+        return $this->rules($request, $record);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function defaultAttributes(Request $request): array
+    {
+        return $this->defaults($request);
+    }
+
     public function index(Request $request): JsonResponse
     {
         $perPage = min(max($request->integer('per_page', 15), 1), 100);
