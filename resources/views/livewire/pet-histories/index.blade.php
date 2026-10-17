@@ -14,7 +14,7 @@ new #[Layout('layouts.app')] #[Title('Historial de mascotas')] class extends Cru
 
     protected string $controller = PetHistoryController::class;
 
-    protected array $with = ['pet', 'petStatus', 'user'];
+    protected array $with = ['pet.species', 'pet.breed', 'pet.color', 'petStatus', 'user'];
 
     protected array $searchable = ['notes', 'pet.name'];
 
@@ -23,7 +23,7 @@ new #[Layout('layouts.app')] #[Title('Historial de mascotas')] class extends Cru
     protected function options(): array
     {
         return [
-            'pets' => Pet::query()->orderBy('name')->get(),
+            'pets' => Pet::query()->with(['species', 'breed', 'color'])->orderBy('name')->get(),
             'petStatuses' => PetStatus::query()->orderBy('name')->get(),
         ];
     }
@@ -43,7 +43,7 @@ new #[Layout('layouts.app')] #[Title('Historial de mascotas')] class extends Cru
         <tr wire:key="{{ $record->id }}">
             <x-crud.td>{{ $record->id }}</x-crud.td>
             <x-crud.td>{{ $record->recorded_at?->format('Y-m-d') }}</x-crud.td>
-            <x-crud.td>{{ $record->pet?->name }}</x-crud.td>
+            <x-crud.td><x-crud.pet-name :pet="$record->pet" /></x-crud.td>
             <x-crud.td>{{ $record->petStatus?->name }}</x-crud.td>
             <x-crud.td class="max-w-xs truncate" :title="$record->notes">{{ $record->notes }}</x-crud.td>
             <x-crud.td>{{ $record->user?->name }}</x-crud.td>
@@ -52,7 +52,7 @@ new #[Layout('layouts.app')] #[Title('Historial de mascotas')] class extends Cru
     @endforeach
 
     <x-slot:form>
-        <x-crud.select name="pet_id" label="Mascota" :options="$pets" />
+        <x-crud.pet-select :pets="$pets" />
         <x-crud.select name="pet_status_id" label="Estado" :options="$petStatuses" />
         <x-crud.input name="recorded_at" label="Fecha" type="date" />
         <x-crud.textarea name="notes" label="Observaciones" />

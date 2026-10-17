@@ -14,7 +14,7 @@ new #[Layout('layouts.app')] #[Title('Tratamientos aplicados')] class extends Cr
 
     protected string $controller = PetTreatmentController::class;
 
-    protected array $with = ['pet', 'treatment'];
+    protected array $with = ['pet.species', 'pet.breed', 'pet.color', 'treatment'];
 
     protected array $searchable = ['instructions', 'pet.name', 'treatment.name'];
 
@@ -23,7 +23,7 @@ new #[Layout('layouts.app')] #[Title('Tratamientos aplicados')] class extends Cr
     protected function options(): array
     {
         return [
-            'pets' => Pet::query()->orderBy('name')->get(),
+            'pets' => Pet::query()->with(['species', 'breed', 'color'])->orderBy('name')->get(),
             'treatments' => Treatment::query()->orderBy('name')->get(),
         ];
     }
@@ -42,7 +42,7 @@ new #[Layout('layouts.app')] #[Title('Tratamientos aplicados')] class extends Cr
         <tr wire:key="{{ $record->id }}">
             <x-crud.td>{{ $record->id }}</x-crud.td>
             <x-crud.td>{{ $record->treated_at?->format('Y-m-d') }}</x-crud.td>
-            <x-crud.td>{{ $record->pet?->name }}</x-crud.td>
+            <x-crud.td><x-crud.pet-name :pet="$record->pet" /></x-crud.td>
             <x-crud.td>{{ $record->treatment?->name }}</x-crud.td>
             <x-crud.td class="max-w-xs truncate" :title="$record->instructions">{{ $record->instructions }}</x-crud.td>
             <x-crud.actions :id="$record->id" />
@@ -50,7 +50,7 @@ new #[Layout('layouts.app')] #[Title('Tratamientos aplicados')] class extends Cr
     @endforeach
 
     <x-slot:form>
-        <x-crud.select name="pet_id" label="Mascota" :options="$pets" />
+        <x-crud.pet-select :pets="$pets" />
         <x-crud.select name="treatment_id" label="Tratamiento" :options="$treatments" />
         <x-crud.input name="treated_at" label="Fecha" type="date" />
         <x-crud.textarea name="instructions" label="Indicaciones" />

@@ -15,7 +15,7 @@ new #[Layout('layouts.app')] #[Title('Adopciones')] class extends CrudComponent
 
     protected string $controller = AdoptionController::class;
 
-    protected array $with = ['pet', 'person', 'adoptionStatus', 'user'];
+    protected array $with = ['pet.species', 'pet.breed', 'pet.color', 'person', 'adoptionStatus', 'user'];
 
     protected array $searchable = ['notes', 'pet.name', 'person.name'];
 
@@ -33,7 +33,7 @@ new #[Layout('layouts.app')] #[Title('Adopciones')] class extends CrudComponent
     protected function options(): array
     {
         return [
-            'pets' => Pet::query()->orderBy('name')->get(),
+            'pets' => Pet::query()->with(['species', 'breed', 'color'])->orderBy('name')->get(),
             'people' => Person::query()->orderBy('name')->get(),
             'adoptionStatuses' => AdoptionStatus::query()->orderBy('name')->get(),
         ];
@@ -55,7 +55,7 @@ new #[Layout('layouts.app')] #[Title('Adopciones')] class extends CrudComponent
     @foreach ($records as $record)
         <tr wire:key="{{ $record->id }}">
             <x-crud.td>{{ $record->id }}</x-crud.td>
-            <x-crud.td>{{ $record->pet?->name }}</x-crud.td>
+            <x-crud.td><x-crud.pet-name :pet="$record->pet" /></x-crud.td>
             <x-crud.td>{{ $record->person?->name }}</x-crud.td>
             <x-crud.td>{{ $record->requested_at?->format('Y-m-d') }}</x-crud.td>
             <x-crud.td>{{ $record->approved_at?->format('Y-m-d') ?? '—' }}</x-crud.td>
@@ -67,7 +67,7 @@ new #[Layout('layouts.app')] #[Title('Adopciones')] class extends CrudComponent
     @endforeach
 
     <x-slot:form>
-        <x-crud.select name="pet_id" label="Mascota" :options="$pets" />
+        <x-crud.pet-select :pets="$pets" />
         <x-crud.select name="person_id" label="Adoptante" :options="$people" />
         <x-crud.input name="requested_at" label="Fecha de solicitud" type="date" />
         <x-crud.select name="adoption_status_id" label="Estado" :options="$adoptionStatuses" />
