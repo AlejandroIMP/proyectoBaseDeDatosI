@@ -29,6 +29,24 @@ use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('login', [AuthController::class, 'login'])->middleware('throttle:6,1');
+Route::post('register', [AuthController::class, 'register']);
+
+// Rutas públicas de catálogo, metadatos y solicitudes de adopción
+Route::get('pets', [PetController::class, 'index']);
+Route::get('pets/{pet}', [PetController::class, 'show']);
+Route::get('species', [SpeciesController::class, 'index']);
+Route::get('species/{species}', [SpeciesController::class, 'show']);
+Route::get('breeds', [BreedController::class, 'index']);
+Route::get('breeds/{breed}', [BreedController::class, 'show']);
+Route::get('colors', [ColorController::class, 'index']);
+Route::get('colors/{color}', [ColorController::class, 'show']);
+Route::get('pet-statuses', [PetStatusController::class, 'index']);
+Route::get('pet-statuses/{pet_status}', [PetStatusController::class, 'show']);
+Route::get('shelters', [ShelterController::class, 'index']);
+Route::get('shelters/{shelter}', [ShelterController::class, 'show']);
+Route::post('public/adoptions', [AdoptionController::class, 'publicApply']);
+Route::get('public/my-applications', [AdoptionController::class, 'publicMyApplications']);
+Route::post('public/donations', [DonationController::class, 'publicDonate']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', [AuthController::class, 'user']);
@@ -37,23 +55,26 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('roles/{role}/permissions', [RoleController::class, 'syncPermissions']);
     Route::put('users/{user}/roles', [UserController::class, 'syncRoles']);
 
+    // Recursos con catálogo público pero operaciones de modificación protegidas
+    Route::apiResource('pets', PetController::class)->except(['index', 'show']);
+    Route::apiResource('species', SpeciesController::class)->except(['index', 'show']);
+    Route::apiResource('breeds', BreedController::class)->except(['index', 'show']);
+    Route::apiResource('colors', ColorController::class)->except(['index', 'show']);
+    Route::apiResource('pet-statuses', PetStatusController::class)->except(['index', 'show']);
+    Route::apiResource('shelters', ShelterController::class)->except(['index', 'show']);
+
+    // Recursos administrativos completamente protegidos
     Route::apiResources([
         'users' => UserController::class,
-        'species' => SpeciesController::class,
-        'colors' => ColorController::class,
-        'pet-statuses' => PetStatusController::class,
-        'shelters' => ShelterController::class,
         'residences' => ResidenceController::class,
         'adoption-statuses' => AdoptionStatusController::class,
         'roles' => RoleController::class,
         'permissions' => PermissionController::class,
         'treatment-types' => TreatmentTypeController::class,
-        'breeds' => BreedController::class,
         'occupations' => OccupationController::class,
         'people' => PersonController::class,
         'donors' => DonorController::class,
         'treatments' => TreatmentController::class,
-        'pets' => PetController::class,
         'pet-histories' => PetHistoryController::class,
         'pet-treatments' => PetTreatmentController::class,
         'appointment-types' => AppointmentTypeController::class,
