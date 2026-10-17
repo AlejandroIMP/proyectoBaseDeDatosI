@@ -58,7 +58,7 @@ const ProtectedAdminRoute: React.FC<ProtectedAdminRouteProps> = ({
 export const ShelterApp: React.FC = () => {
     return (
         <AuthProvider>
-            <BrowserRouter>
+            <BrowserRouter basename="/app">
                 <ErrorBoundary>
                     <Routes>
                         {/* Rutas Públicas */}

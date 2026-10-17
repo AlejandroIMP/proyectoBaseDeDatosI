@@ -30,4 +30,7 @@ Route::middleware(['auth', 'verified', 'can:adopt'])->name('adopter.')->group(fu
     Volt::route('mi-perfil-adoptante', 'adopter.profile')->name('profile');
 });
 
+// SPA de React (Inertia): react-router maneja todo lo que cuelga de /app (ver ShelterApp.tsx).
+Route::inertia('/app/{any?}', 'welcome')->where('any', '.*')->name('app');
+
 require __DIR__.'/auth.php';
