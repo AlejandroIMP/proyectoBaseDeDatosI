@@ -8,6 +8,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
+use Illuminate\Support\Facades\Schema;
+
 abstract class ResourceController extends Controller
 {
     /** @var class-string<Model> */
@@ -36,10 +38,33 @@ abstract class ResourceController extends Controller
     public function index(Request $request): JsonResponse
     {
         $perPage = min(max($request->integer('per_page', 15), 1), 100);
+        $dummy = new $this->model;
+        $table = $dummy->getTable();
+        $query = $this->model::query()->with($this->with);
 
-        return response()->json(
-            $this->model::query()->with($this->with)->orderBy('id')->paginate($perPage)
-        );
+        if ($request->filled('shelter_id')) {
+            $shelterId = (int) $request->input('shelter_id');
+            if ($shelterId > 0) {
+                if (Schema::hasColumn($table, 'shelter_id')) {
+                    $query->where($table . '.shelter_id', $shelterId);
+                } elseif (method_exists($dummy, 'pet')) {
+                    $query->whereHas('pet', function ($q) use ($shelterId) {
+                        $q->where('shelter_id', $shelterId);
+                    });
+                }
+            }
+        }
+
+        $direction = strtolower($request->input('direction', 'asc')) === 'desc' ? 'desc' : 'asc';
+        $sortBy = $request->input('sort_by', 'id');
+
+        if (Schema::hasColumn($table, $sortBy)) {
+            $query->orderBy($table . '.' . $sortBy, $direction);
+        } else {
+            $query->orderBy($table . '.id', $direction);
+        }
+
+        return response()->json($query->paginate($perPage));
     }
 
     public function show(string $id): JsonResponse

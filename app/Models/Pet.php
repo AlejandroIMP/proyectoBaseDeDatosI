@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['name', 'species_id', 'breed_id', 'sex', 'birth_date', 'estimated_age', 'color_id', 'weight_kg', 'notes', 'pet_status_id', 'registered_at', 'status', 'shelter_id'])]
+#[Fillable(['name', 'species_id', 'breed_id', 'sex', 'birth_date', 'estimated_age', 'color_id', 'weight_kg', 'notes', 'pet_status_id', 'registered_at', 'status', 'shelter_id', 'photo_url'])]
 class Pet extends Model
 {
     /**
