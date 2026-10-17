@@ -8,8 +8,20 @@
 
 @theme {
     --font-sans:
-        'Figtree', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
-        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+        'Figtree', 'Inter', 'Instrument Sans', ui-sans-serif, system-ui,
+        sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+
+    --color-primary: #006c49;
+    --color-primary-hover: #00563a;
+    --color-primary-container: #10b981;
+    --color-primary-light: #e6f7f0;
+    --color-surface: #f8f9ff;
+    --color-surface-dim: #eff4ff;
+    --color-surface-card: #ffffff;
+    --color-on-surface: #0b1c30;
+    --color-outline: #e2e8f0;
+    --color-outline-focus: #10b981;
 }
 
 /* Tailwind v4 cambio el color de borde por defecto a currentColor; se conserva el de v3 para los componentes de Breeze. */
@@ -25,4 +37,10 @@
 
 [x-cloak] {
     display: none !important;
+}
+
+body {
+    background-color: var(--color-surface, #f8f9ff);
+    color: var(--color-on-surface, #0b1c30);
+    font-family: var(--font-sans);
 }
