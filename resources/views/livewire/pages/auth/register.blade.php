@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
@@ -28,7 +29,15 @@ new #[Layout('layouts.guest')] class extends Component
 
         $validated['password'] = Hash::make($validated['password']);
 
-        event(new Registered($user = User::create($validated)));
+        $user = User::create($validated);
+
+        // Toda cuenta creada desde el registro publico es de un adoptante; los demas roles los asigna un administrador.
+        $user->roles()->attach(Role::firstOrCreate(
+            ['name' => Role::ADOPTER],
+            ['description' => 'Persona interesada en adoptar una mascota'],
+        ));
+
+        event(new Registered($user));
 
         Auth::login($user);
 

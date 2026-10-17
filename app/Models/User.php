@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
@@ -49,5 +51,32 @@ class User extends Authenticatable
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class)->withTimestamps();
+    }
+
+    /**
+     * Adopter profile (people record) linked to this account.
+     *
+     * @return HasOne<Person, $this>
+     */
+    public function person(): HasOne
+    {
+        return $this->hasOne(Person::class);
+    }
+
+    /**
+     * Names of the permissions granted through the user's roles, memoized per instance.
+     *
+     * @return Collection<int, string>
+     */
+    public function permissionNames(): Collection
+    {
+        return once(fn () => Permission::query()
+            ->whereHas('roles.users', fn ($query) => $query->whereKey($this->getKey()))
+            ->pluck('name'));
+    }
+
+    public function hasPermission(string $permission): bool
+    {
+        return $this->permissionNames()->contains($permission);
     }
 }

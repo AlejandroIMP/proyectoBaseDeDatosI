@@ -9,6 +9,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable(['name'])]
 class AdoptionStatus extends Model
 {
+    public const PENDING = 'Pendiente';
+
+    public const CANCELLED = 'Cancelada';
+
+    /** Statuses of a request that is still in progress: an adopter may only have one of these per pet. */
+    public const OPEN = [self::PENDING, 'En revisión', 'Aprobada'];
+
     /**
      * @return HasMany<Adoption, $this>
      */

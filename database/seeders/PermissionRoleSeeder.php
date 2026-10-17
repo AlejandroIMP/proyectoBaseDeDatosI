@@ -13,11 +13,13 @@ class PermissionRoleSeeder extends Seeder
         $map = [
             'Administrador' => [
                 'manage_pets', 'manage_adoptions', 'manage_appointments', 'manage_donations',
-                'manage_treatments', 'manage_rescues', 'manage_users', 'view_reports',
+                'manage_treatments', 'manage_rescues', 'manage_users', 'manage_catalogs', 'view_reports',
             ],
             'Veterinario' => ['manage_pets', 'manage_treatments', 'view_reports'],
             'Recepcionista' => ['manage_adoptions', 'manage_appointments', 'manage_donations'],
             'Voluntario' => ['manage_rescues'],
+            // Los adoptantes no gestionan ningun modulo del refugio: solo consultan mascotas y solicitan adopciones.
+            Role::ADOPTER => ['adopt'],
         ];
 
         foreach ($map as $roleName => $permissionNames) {

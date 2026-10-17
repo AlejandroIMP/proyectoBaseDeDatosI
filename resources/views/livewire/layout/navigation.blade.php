@@ -35,7 +35,13 @@ new class extends Component
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    @foreach (Modules::groups() as $group => $modules)
+                    @can('adopt')
+                        <x-nav-link :href="route('adopter.pets')" :active="request()->routeIs('adopter.pets', 'adopter.pet')" wire:navigate>Adoptar</x-nav-link>
+                        <x-nav-link :href="route('adopter.requests')" :active="request()->routeIs('adopter.requests')" wire:navigate>Mis solicitudes</x-nav-link>
+                        <x-nav-link :href="route('adopter.profile')" :active="request()->routeIs('adopter.profile')" wire:navigate>Mis datos</x-nav-link>
+                    @endcan
+
+                    @foreach (Modules::groupsFor(auth()->user()) as $group => $modules)
                         @php($groupActive = collect(array_keys($modules))->contains(fn ($slug) => request()->routeIs('crud.'.$slug)))
                         <div class="flex items-center">
                             <x-dropdown align="left" width="48">
@@ -114,7 +120,13 @@ new class extends Component
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
-            @foreach (Modules::groups() as $group => $modules)
+            @can('adopt')
+                <x-responsive-nav-link :href="route('adopter.pets')" :active="request()->routeIs('adopter.pets', 'adopter.pet')" wire:navigate>Adoptar</x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('adopter.requests')" :active="request()->routeIs('adopter.requests')" wire:navigate>Mis solicitudes</x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('adopter.profile')" :active="request()->routeIs('adopter.profile')" wire:navigate>Mis datos</x-responsive-nav-link>
+            @endcan
+
+            @foreach (Modules::groupsFor(auth()->user()) as $group => $modules)
                 <div class="px-4 pt-3 text-xs font-semibold tracking-wider text-gray-400 uppercase">{{ $group }}</div>
                 @foreach ($modules as $slug => $module)
                     <x-responsive-nav-link :href="route('crud.'.$slug)" :active="request()->routeIs('crud.'.$slug)" wire:navigate>

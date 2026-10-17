@@ -26,6 +26,7 @@ use App\Http\Controllers\Api\SpeciesController;
 use App\Http\Controllers\Api\TreatmentController;
 use App\Http\Controllers\Api\TreatmentTypeController;
 use App\Http\Controllers\Api\UserController;
+use App\Support\Modules;
 use Illuminate\Support\Facades\Route;
 
 Route::post('login', [AuthController::class, 'login'])->middleware('throttle:6,1');
@@ -34,10 +35,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', [AuthController::class, 'user']);
     Route::post('logout', [AuthController::class, 'logout']);
 
-    Route::put('roles/{role}/permissions', [RoleController::class, 'syncPermissions']);
-    Route::put('users/{user}/roles', [UserController::class, 'syncRoles']);
+    Route::put('roles/{role}/permissions', [RoleController::class, 'syncPermissions'])->middleware('can:manage_users');
+    Route::put('users/{user}/roles', [UserController::class, 'syncRoles'])->middleware('can:manage_users');
 
-    Route::apiResources([
+    // Cada recurso exige el mismo permiso que su modulo web (App\Support\Modules).
+    $resources = [
         'users' => UserController::class,
         'species' => SpeciesController::class,
         'colors' => ColorController::class,
@@ -63,5 +65,9 @@ Route::middleware('auth:sanctum')->group(function () {
         'adoptions' => AdoptionController::class,
         'adoption-follow-ups' => AdoptionFollowUpController::class,
         'contracts' => ContractController::class,
-    ]);
+    ];
+
+    foreach ($resources as $slug => $controller) {
+        Route::apiResource($slug, $controller)->middleware('can:'.Modules::permission($slug));
+    }
 });

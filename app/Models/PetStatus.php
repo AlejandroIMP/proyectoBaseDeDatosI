@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable(['name'])]
 class PetStatus extends Model
 {
+    /** Only pets in this status are offered to adopters. */
+    public const AVAILABLE = 'Disponible';
+
     /**
      * @return HasMany<Pet, $this>
      */

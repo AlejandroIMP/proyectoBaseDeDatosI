@@ -17,11 +17,13 @@ class PermissionSeeder extends Seeder
             ['name' => 'manage_treatments', 'description' => 'Gestionar tratamientos médicos'],
             ['name' => 'manage_rescues', 'description' => 'Registrar rescates de animales'],
             ['name' => 'manage_users', 'description' => 'Gestionar usuarios y roles del sistema'],
+            ['name' => 'manage_catalogs', 'description' => 'Gestionar catálogos generales (especies, refugios, estados...)'],
+            ['name' => 'adopt', 'description' => 'Ver mascotas disponibles y solicitar adopciones'],
             ['name' => 'view_reports', 'description' => 'Ver reportes y estadísticas'],
         ];
 
         foreach ($permissions as $item) {
-            Permission::create($item);
+            Permission::updateOrCreate(['name' => $item['name']], $item);
         }
     }
 }

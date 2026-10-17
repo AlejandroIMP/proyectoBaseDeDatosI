@@ -5,6 +5,12 @@ services:
       dockerfile: Containerfile
     container_name: laravel_app
     working_dir: /var/www/html
+    # Podman rootless: tu usuario del host se mapea a www-data (33) y el contenedor corre como el,
+    # asi todo lo que escriben php-fpm y artisan queda a tu nombre (evita "touch(): Utime failed").
+    userns_mode: "keep-id:uid=33,gid=33"
+    user: "33:33"
+    environment:
+      COMPOSER_HOME: /tmp/composer
     volumes:
       - ./:/var/www/html:Z
     extra_hosts:

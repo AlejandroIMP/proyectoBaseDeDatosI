@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 #[Fillable(['name', 'description'])]
 class Role extends Model
 {
+    /** Role given to every user who signs up through the registration form. */
+    public const ADOPTER = 'Adoptante';
+
     /**
      * @return BelongsToMany<Permission, $this>
      */

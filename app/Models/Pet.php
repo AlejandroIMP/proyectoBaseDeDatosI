@@ -2,11 +2,17 @@
 
 namespace App\Models;
 
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property CarbonInterface $birth_date
+ * @property CarbonInterface $registered_at
+ */
 #[Fillable(['name', 'species_id', 'breed_id', 'sex', 'birth_date', 'estimated_age', 'color_id', 'weight_kg', 'notes', 'pet_status_id', 'registered_at', 'status', 'shelter_id'])]
 class Pet extends Model
 {
@@ -108,5 +114,32 @@ class Pet extends Model
     public function adoptions(): HasMany
     {
         return $this->hasMany(Adoption::class);
+    }
+
+    /**
+     * Active pets whose status is the one offered to adopters.
+     *
+     * @param  Builder<Pet>  $query
+     */
+    public function scopeAvailable(Builder $query): void
+    {
+        $query->where('status', 'active')
+            ->whereHas('petStatus', fn (Builder $query) => $query->where('name', PetStatus::AVAILABLE));
+    }
+
+    /**
+     * Human readable age from the birth date, e.g. "2 años" or "5 meses".
+     */
+    public function ageLabel(): string
+    {
+        $months = (int) $this->birth_date->diffInMonths(now(), absolute: true);
+
+        if ($months >= 12) {
+            $years = intdiv($months, 12);
+
+            return $years.' '.($years === 1 ? 'año' : 'años');
+        }
+
+        return $months.' '.($months === 1 ? 'mes' : 'meses');
     }
 }

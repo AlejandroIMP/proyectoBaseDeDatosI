@@ -7,9 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['name', 'document_type', 'document_number', 'email', 'current_pets_count', 'estado_civil', 'cantidad_hijos', 'occupation_id', 'residence_id', 'income'])]
+#[Fillable(['user_id', 'name', 'document_type', 'document_number', 'email', 'current_pets_count', 'estado_civil', 'cantidad_hijos', 'occupation_id', 'residence_id', 'income'])]
 class Person extends Model
 {
+    public const MARITAL_STATUSES = ['Soltero(a)', 'Casado(a)', 'Divorciado(a)', 'Viudo(a)', 'Unión libre'];
+
+    /**
+     * Adopter account that owns this record, if any.
+     *
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     /**
      * @return BelongsTo<Occupation, $this>
      */
