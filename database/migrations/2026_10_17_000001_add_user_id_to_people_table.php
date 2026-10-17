@@ -11,6 +11,7 @@ return new class extends Migration
     {
  
             Schema::table('people', function (Blueprint $table) {
+                $table->foreignId('user_id');
                 $table->unique('user_id', 'people_user_id_unique');
             });
     }
