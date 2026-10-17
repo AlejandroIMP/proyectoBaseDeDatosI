@@ -18,6 +18,17 @@ services:
     networks:
       - laravel
 
+  # Compila los assets de Vite a public/build y los recompila al cambiar CSS, JS o vistas Blade.
+  # El proyecto va montado como volumen, por eso se compila aqui y no dentro de la imagen.
+  vite:
+    image: docker.io/library/node:22-alpine
+    container_name: laravel_vite
+    working_dir: /app
+    userns_mode: "keep-id"
+    command: sh -c "[ -d node_modules ] || npm ci --no-audit --no-fund; npm run build -- --watch"
+    volumes:
+      - ./:/app:Z
+
   webserver:
     image: docker.io/library/nginx:alpine
     container_name: laravel_nginx
