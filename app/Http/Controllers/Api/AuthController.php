@@ -33,6 +33,32 @@ class AuthController extends Controller
         ]);
     }
 
+    public function register(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:6'],
+            'device_name' => ['sometimes', 'string', 'max:255'],
+        ]);
+
+        $user = User::query()->create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => $data['password'],
+        ]);
+
+        $defaultRole = \App\Models\Role::query()->where('name', 'Voluntario')->first();
+        if ($defaultRole) {
+            $user->roles()->syncWithoutDetaching([$defaultRole->id]);
+        }
+
+        return response()->json([
+            'token' => $user->createToken($data['device_name'] ?? 'api')->plainTextToken,
+            'user' => $user->load('roles'),
+        ], 201);
+    }
+
     public function logout(Request $request): Response
     {
         $token = $request->user()?->currentAccessToken();
@@ -49,3 +75,4 @@ class AuthController extends Controller
         return response()->json($request->user()?->load('roles'));
     }
 }
+

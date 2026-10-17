@@ -12,7 +12,14 @@ class ContractController extends ResourceController
     protected string $model = Contract::class;
 
     /** @var list<string> */
-    protected array $with = ['user', 'adoption'];
+    protected array $with = [
+        'user',
+        'adoption.pet.species',
+        'adoption.pet.breed',
+        'adoption.pet.shelter',
+        'adoption.person.residence',
+        'adoption.person.occupation',
+    ];
 
     protected function defaults(Request $request): array
     {

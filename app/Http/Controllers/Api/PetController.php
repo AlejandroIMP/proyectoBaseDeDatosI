@@ -13,7 +13,7 @@ class PetController extends ResourceController
     protected string $model = Pet::class;
 
     /** @var list<string> */
-    protected array $with = ['species', 'breed', 'color', 'petStatus', 'shelter'];
+    protected array $with = ['species', 'breed', 'color', 'petStatus', 'shelter', 'petTreatments.treatment'];
 
     protected function rules(Request $request, ?Model $record): array
     {
@@ -33,6 +33,7 @@ class PetController extends ResourceController
             'registered_at' => ['required', 'date'],
             'status' => ['sometimes', 'in:active,inactive'],
             'shelter_id' => ['required', 'integer', 'exists:shelters,id'],
+            'photo_url' => ['nullable', 'string', 'max:500'],
         ];
     }
 }
