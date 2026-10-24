@@ -156,7 +156,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen = false, onCloseM
                             </div>
                             <div className="min-w-0 flex-1">
                                 <h2 className="text-lg font-black tracking-tight text-[#0b1c30] flex items-center gap-1.5 truncate">
-                                    ShelterOps
+                                    Refugios Conectados
                                 </h2>
                                 <div className="mt-0.5">
                                     <Badge variant={getRoleBadgeVariant(primaryRole)} size="sm">

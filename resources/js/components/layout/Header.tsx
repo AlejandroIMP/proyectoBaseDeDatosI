@@ -265,7 +265,7 @@ export const Header: React.FC<HeaderProps> = ({ onToggleMobileNav }) => {
                 </button>
 
                 <h1 className="text-sm sm:text-base font-bold text-[#006c49] truncate">
-                    ShelterOps
+                    Refugios Conectados
                 </h1>
                 <Link
                     to="/catalog"
