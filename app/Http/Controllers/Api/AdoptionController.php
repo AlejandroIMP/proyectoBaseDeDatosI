@@ -16,7 +16,7 @@ class AdoptionController extends ResourceController
 
     protected function defaults(Request $request): array
     {
-        return ['user_id' => $request->user()?->id];
+        return ['user_id' => $request->user()?->id ?? \App\Models\User::query()->first()?->id ?? 1];
     }
 
     protected function rules(Request $request, ?Model $record): array
@@ -45,38 +45,47 @@ class AdoptionController extends ResourceController
             'notes' => ['nullable', 'string'],
         ]);
 
-        $person = \App\Models\Person::query()->firstOrCreate(
-            ['email' => $data['email']],
-            [
-                'name' => $data['name'],
-                'document_type' => 'DPI',
-                'document_number' => $data['document_number'] ?? ('DOC-' . rand(100000, 999999)),
-                'current_pets_count' => 0,
-                'estado_civil' => 'Soltero/a',
-                'cantidad_hijos' => 0,
-                'income' => 3000,
-            ]
-        );
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($data, $request) {
+            $defaultOccupationId = \App\Models\Occupation::query()->first()?->id ?? 1;
+            $defaultResidenceId = \App\Models\Residence::query()->first()?->id ?? 1;
+            $defaultUserId = $request->user()?->id ?? \App\Models\User::query()->first()?->id ?? 1;
 
-        $statusId = \App\Models\AdoptionStatus::query()->first()?->id ?? 1;
+            $person = \App\Models\Person::query()->firstOrCreate(
+                ['email' => $data['email']],
+                [
+                    'name' => $data['name'],
+                    'document_type' => 'DPI',
+                    'document_number' => $data['document_number'] ?? ('DOC-' . rand(100000, 999999)),
+                    'current_pets_count' => 0,
+                    'estado_civil' => 'Soltero/a',
+                    'cantidad_hijos' => 0,
+                    'income' => 3000,
+                    'occupation_id' => $defaultOccupationId,
+                    'residence_id' => $defaultResidenceId,
+                ]
+            );
 
-        $notes = ($data['notes'] ?? '');
-        if (!empty($data['phone'])) {
-            $notes .= ' [Teléfono: ' . $data['phone'] . ']';
-        }
+            $statusId = \App\Models\AdoptionStatus::query()->first()?->id ?? 1;
 
-        $adoption = Adoption::query()->create([
-            'pet_id' => $data['pet_id'],
-            'person_id' => $person->id,
-            'requested_at' => now(),
-            'adoption_status_id' => $statusId,
-            'notes' => $notes ?: null,
-        ]);
+            $notes = ($data['notes'] ?? '');
+            if (!empty($data['phone'])) {
+                $notes .= ' [Teléfono: ' . $data['phone'] . ']';
+            }
 
-        return response()->json([
-            'message' => 'Solicitud de adopción recibida con éxito.',
-            'adoption' => $adoption->load(['pet', 'person', 'adoptionStatus']),
-        ], 201);
+            $adoption = Adoption::query()->create([
+                'pet_id' => $data['pet_id'],
+                'person_id' => $person->id,
+                'requested_at' => now(),
+                'adoption_status_id' => $statusId,
+                'user_id' => $defaultUserId,
+                'notes' => $notes ?: null,
+            ]);
+
+            return response()->json([
+                'message' => 'Solicitud de adopción recibida con éxito.',
+                'adoption' => $adoption->load(['pet', 'person', 'adoptionStatus']),
+            ], 201);
+        });
     }
 
     public function publicMyApplications(Request $request): \Illuminate\Http\JsonResponse
