@@ -42,7 +42,7 @@
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
                     <a href="/" class="flex items-center gap-2 font-semibold text-gray-900">
                         <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-600 text-white">
-                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="9" r="2.2"/><circle cx="9.5" cy="5" r="2.2"/><circle cx="14.5" cy="5" r="2.2"/><circle cx="19" cy="9" r="2.2"/><path d="M12 10.5c-3.2 0-6.5 4.6-6.5 7.4 0 1.7 1.3 2.6 3 2.6 1.3 0 2.2-.7 3.5-.7s2.2.7 3.5.7c1.7 0 3-.9 3-2.6 0-2.8-3.3-7.4-6.5-7.4z"/></svg>
+                            <x-application-logo class="h-5 w-5" />
                         </span>
                         <span class="hidden sm:inline">{{ config('app.name') }}</span>
                     </a>
