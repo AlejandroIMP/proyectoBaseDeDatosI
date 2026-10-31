@@ -15,6 +15,7 @@ class PetStatusController extends ResourceController
     {
         return [
             'name' => ['required', 'string', 'max:50'],
+            'is_adoptable' => ['boolean'],
         ];
     }
 }

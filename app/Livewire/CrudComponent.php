@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Livewire\Attributes\Url;
 use Livewire\Volt\Component;
 use Livewire\WithPagination;
@@ -198,10 +199,9 @@ abstract class CrudComponent extends Component
             ->with($this->with)
             ->when($this->search !== '', fn (Builder $query) => $query->where(function (Builder $query) {
                 foreach ($this->searchable as $column) {
-                    // "relation.column" searches on a related model
+                    // "relation.column" searches on a related model; relations may be nested ("adoption.pet.name")
                     if (str_contains($column, '.')) {
-                        [$relation, $relatedColumn] = explode('.', $column, 2);
-                        $query->orWhereRelation($relation, $relatedColumn, 'like', '%'.$this->search.'%');
+                        $query->orWhereRelation(Str::beforeLast($column, '.'), Str::afterLast($column, '.'), 'like', '%'.$this->search.'%');
                     } else {
                         $query->orWhere($column, 'like', '%'.$this->search.'%');
                     }

@@ -52,6 +52,7 @@ class Modules
                 'appointments' => ['label' => 'Citas', 'model' => Appointment::class, 'permission' => 'manage_appointments'],
             ],
             'Adopciones' => [
+                'adoption-requests' => ['label' => 'Solicitudes', 'model' => Adoption::class, 'permission' => 'manage_adoptions'],
                 'adoptions' => ['label' => 'Adopciones', 'model' => Adoption::class, 'permission' => 'manage_adoptions'],
                 'adoption-follow-ups' => ['label' => 'Seguimientos', 'model' => AdoptionFollowUp::class, 'permission' => 'manage_adoptions'],
                 'contracts' => ['label' => 'Contratos', 'model' => Contract::class, 'permission' => 'manage_adoptions'],

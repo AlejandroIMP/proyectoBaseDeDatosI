@@ -6,11 +6,23 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['name'])]
+#[Fillable(['name', 'is_adoptable'])]
 class PetStatus extends Model
 {
-    /** Only pets in this status are offered to adopters. */
+    /** Status a released pet returns to; which statuses are offered to adopters is set by is_adoptable. */
     public const AVAILABLE = 'Disponible';
+
+    public const RESERVED = 'Reservado';
+
+    public const ADOPTED = 'Adoptado';
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return ['is_adoptable' => 'boolean'];
+    }
 
     /**
      * @return HasMany<Pet, $this>

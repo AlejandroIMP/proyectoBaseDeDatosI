@@ -6,6 +6,10 @@ use App\Models\Adoption;
 use App\Models\AdoptionStatus;
 use App\Models\Person;
 use App\Models\Pet;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 
@@ -23,19 +27,33 @@ new #[Layout('layouts.app')] #[Title('Adopciones')] class extends CrudComponent
         'pet_id' => 'mascota',
         'person_id' => 'adoptante',
         'requested_at' => 'fecha de solicitud',
-        'approved_at' => 'fecha de aprobación',
-        'delivered_at' => 'fecha de entrega',
         'notes' => 'observaciones',
         'document' => 'documento',
-        'adoption_status_id' => 'estado',
     ];
+
+    // El estado y sus fechas solo cambian desde el flujo de solicitudes (adoption-requests).
+    protected function rules(Request $request, ?Model $record): array
+    {
+        return Arr::except(parent::rules($request, $record), ['adoption_status_id', 'approved_at', 'delivered_at']);
+    }
+
+    protected function persistableData(array $validated, ?Model $record): array
+    {
+        $data = parent::persistableData($validated, $record);
+
+        return $record ? $data : [...$data, 'adoption_status_id' => AdoptionStatus::query()->where('name', AdoptionStatus::PENDING)->value('id')];
+    }
 
     protected function options(): array
     {
         return [
-            'pets' => Pet::query()->with(['species', 'breed', 'color'])->orderBy('name')->get(),
+            // Solo mascotas elegibles, mas la que ya tiene la adopcion que se esta editando.
+            'pets' => Pet::query()
+                ->with(['species', 'breed', 'color'])
+                ->where(fn (Builder $query) => $query->available()->orWhere('id', $this->form['pet_id'] ?? null))
+                ->orderBy('name')
+                ->get(),
             'people' => Person::query()->orderBy('name')->get(),
-            'adoptionStatuses' => AdoptionStatus::query()->orderBy('name')->get(),
         ];
     }
 }; ?>
@@ -70,10 +88,8 @@ new #[Layout('layouts.app')] #[Title('Adopciones')] class extends CrudComponent
         <x-crud.pet-select :pets="$pets" />
         <x-crud.select name="person_id" label="Adoptante" :options="$people" />
         <x-crud.input name="requested_at" label="Fecha de solicitud" type="date" />
-        <x-crud.select name="adoption_status_id" label="Estado" :options="$adoptionStatuses" />
-        <x-crud.input name="approved_at" label="Fecha de aprobación" type="date" />
-        <x-crud.input name="delivered_at" label="Fecha de entrega" type="date" />
         <x-crud.input name="document" label="Documento" span />
         <x-crud.textarea name="notes" label="Observaciones" />
+        <p class="text-xs text-gray-500 sm:col-span-2">El estado se gestiona desde <a href="{{ route('crud.adoption-requests') }}" wire:navigate class="font-medium text-indigo-600 hover:text-indigo-500">Solicitudes</a>; las nuevas inician como Pendiente.</p>
     </x-slot:form>
 </x-crud.page>

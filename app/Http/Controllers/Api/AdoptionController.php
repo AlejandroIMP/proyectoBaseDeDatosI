@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Adoption;
+use App\Models\AdoptionStatus;
+use App\Models\Pet;
+use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
@@ -21,23 +24,55 @@ class AdoptionController extends ResourceController
 
     protected function rules(Request $request, ?Model $record): array
     {
+        $adoption = $record instanceof Adoption ? $record : null;
+        $requestedAt = $request->input('requested_at') ?: $adoption?->requested_at?->toDateString();
+        $approvedAt = $request->input('approved_at') ?: $adoption?->approved_at?->toDateString();
+
         return [
-            'pet_id' => ['required', 'integer', 'exists:pets,id'],
+            'pet_id' => ['required', 'integer', 'exists:pets,id', $this->petAdoptable($adoption)],
             'person_id' => ['required', 'integer', 'exists:people,id'],
-            'requested_at' => ['required', 'date'],
-            'approved_at' => ['nullable', 'date'],
-            'delivered_at' => ['nullable', 'date'],
+            'requested_at' => ['required', 'date', 'before_or_equal:today'],
+            'approved_at' => ['nullable', 'date', 'before_or_equal:today', ...($requestedAt ? ['after_or_equal:'.$requestedAt] : [])],
+            'delivered_at' => ['nullable', 'date', 'before_or_equal:today', ...(($approvedAt ?: $requestedAt) ? ['after_or_equal:'.($approvedAt ?: $requestedAt)] : [])],
             'notes' => ['nullable', 'string'],
             'document' => ['nullable', 'string', 'max:255'],
-            'adoption_status_id' => ['required', 'integer', 'exists:adoption_statuses,id'],
+            'adoption_status_id' => ['required', 'integer', 'exists:adoption_statuses,id', $this->statusReachable($request, $adoption)],
             'user_id' => ['sometimes', 'integer', 'exists:users,id'],
         ];
+    }
+
+    /**
+     * A request can only start on an eligible pet; an existing adoption keeps its pet.
+     */
+    private function petAdoptable(?Adoption $adoption): Closure
+    {
+        return function (string $attribute, mixed $value, Closure $fail) use ($adoption) {
+            if ((int) $value !== $adoption?->pet_id && ! Pet::query()->available()->whereKey($value)->exists()) {
+                $fail('La mascota no es elegible para adopción.');
+            }
+        };
+    }
+
+    /**
+     * Same checks as the workflow; records that keep their status and pet are left as they are.
+     */
+    private function statusReachable(Request $request, ?Adoption $adoption): Closure
+    {
+        return function (string $attribute, mixed $value, Closure $fail) use ($request, $adoption) {
+            $petId = $request->integer('pet_id') ?: $adoption?->pet_id;
+            $unchanged = (int) $value === $adoption?->adoption_status_id && $petId === $adoption?->pet_id;
+            $status = AdoptionStatus::query()->whereKey($value)->value('name');
+
+            if (! $unchanged && $status !== null && ($blocker = Adoption::blockerFor($status, $petId, $adoption?->getKey())) !== null) {
+                $fail($blocker);
+            }
+        };
     }
 
     public function publicApply(Request $request): \Illuminate\Http\JsonResponse
     {
         $data = $request->validate([
-            'pet_id' => ['required', 'integer', 'exists:pets,id'],
+            'pet_id' => ['required', 'integer', 'exists:pets,id', $this->petAdoptable(null)],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],

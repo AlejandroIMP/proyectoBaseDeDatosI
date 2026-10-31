@@ -19,7 +19,7 @@ class PetStatusSeeder extends Seeder
         ];
 
         foreach ($statuses as $name) {
-            PetStatus::create(['name' => $name]);
+            PetStatus::create(['name' => $name, 'is_adoptable' => $name === PetStatus::AVAILABLE]);
         }
     }
 }

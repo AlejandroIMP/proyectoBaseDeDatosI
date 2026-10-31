@@ -18,7 +18,8 @@ class AdoptionSeeder extends Seeder
         $personIds = Person::pluck('id');
         $userIds = User::pluck('id');
         $statuses = AdoptionStatus::pluck('id', 'name');
-        $adoptedPetStatusId = PetStatus::where('name', 'Adoptado')->value('id');
+        $adoptedPetStatusId = PetStatus::where('name', PetStatus::ADOPTED)->value('id');
+        $reservedPetStatusId = PetStatus::where('name', PetStatus::RESERVED)->value('id');
 
         // Estados de adopción ponderados: la mayoría entregadas o aprobadas.
         $weightedStatuses = [
@@ -61,6 +62,8 @@ class AdoptionSeeder extends Seeder
 
             if ($statusName === 'Entregada') {
                 $pet->update(['pet_status_id' => $adoptedPetStatusId]);
+            } elseif ($statusName === 'Aprobada') {
+                $pet->update(['pet_status_id' => $reservedPetStatusId]);
             }
         }
     }

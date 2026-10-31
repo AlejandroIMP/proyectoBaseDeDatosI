@@ -1,6 +1,8 @@
 <?php
 
 use App\Livewire\Actions\Logout;
+use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Volt\Component;
 
@@ -17,7 +19,22 @@ new class extends Component
             'password' => ['required', 'string', 'current_password'],
         ]);
 
-        tap(Auth::user(), $logout(...))->delete();
+        // Se borra una copia: al cerrar sesion el guard guarda el remember token de su instancia y,
+        // si fuera la misma ya eliminada, volveria a insertar al usuario.
+        try {
+            User::query()->findOrFail(Auth::id())->delete();
+        } catch (QueryException $e) {
+            // SQLSTATE 23000 = integrity constraint violation (adoptions or other records reference the account)
+            if ((string) $e->getCode() !== '23000') {
+                throw $e;
+            }
+
+            $this->addError('password', 'No puedes eliminar tu cuenta porque tiene adopciones u otros registros asociados. Contacta al refugio.');
+
+            return;
+        }
+
+        $logout();
 
         $this->redirect('/', navigate: true);
     }

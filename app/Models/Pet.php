@@ -113,14 +113,41 @@ class Pet extends Model
     }
 
     /**
-     * Active pets whose status is the one offered to adopters.
+     * Active pets whose status allows starting an adoption.
      *
      * @param  Builder<Pet>  $query
      */
     public function scopeAvailable(Builder $query): void
     {
         $query->where('status', 'active')
-            ->whereHas('petStatus', fn (Builder $query) => $query->where('name', PetStatus::AVAILABLE));
+            ->whereRelation('petStatus', 'is_adoptable', true);
+    }
+
+    public function isAdoptable(): bool
+    {
+        return static::query()->available()->whereKey($this->getKey())->exists();
+    }
+
+    /**
+     * Puts the pet in the status its adoptions call for: adopted once delivered, reserved while approved,
+     * and back to available when no adoption holds it. Non adoptable statuses (e.g. deceased) are left alone.
+     */
+    public function syncAdoptionStatus(): void
+    {
+        $holding = $this->adoptions()->holding()->with('adoptionStatus')->get();
+        $current = $this->petStatus()->first();
+
+        $status = match (true) {
+            $holding->contains(fn (Adoption $adoption) => $adoption->adoptionStatus?->name === AdoptionStatus::DELIVERED) => PetStatus::ADOPTED,
+            $holding->isNotEmpty() => PetStatus::RESERVED,
+            default => PetStatus::AVAILABLE,
+        };
+
+        $managed = $current?->is_adoptable || in_array($current?->name, [PetStatus::RESERVED, PetStatus::ADOPTED], true);
+
+        if ($managed && $current->name !== $status) {
+            $this->update(['pet_status_id' => PetStatus::query()->where('name', $status)->value('id')]);
+        }
     }
 
     /**
