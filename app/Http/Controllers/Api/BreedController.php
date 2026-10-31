@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Breed;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class BreedController extends ResourceController
 {
@@ -18,7 +19,7 @@ class BreedController extends ResourceController
     {
         return [
             'species_id' => ['required', 'integer', 'exists:species,id'],
-            'name' => ['required', 'string', 'max:50'],
+            'name' => ['required', 'string', 'max:50', Rule::unique('breeds', 'name')->ignore($record)->where('species_id', $request->integer('species_id') ?: $record?->getAttribute('species_id'))],
             'description' => ['required', 'string', 'max:50'],
         ];
     }

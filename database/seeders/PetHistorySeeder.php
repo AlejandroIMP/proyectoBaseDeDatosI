@@ -36,6 +36,14 @@ class PetHistorySeeder extends Seeder
                     'user_id' => $faker->randomElement($userIds),
                 ]);
             }
+
+            PetHistory::create([
+                'pet_id' => $pet->id,
+                'pet_status_id' => $pet->pet_status_id,
+                'notes' => 'Estado actual de la mascota.',
+                'recorded_at' => now()->format('Y-m-d'),
+                'user_id' => $faker->randomElement($userIds),
+            ]);
         });
     }
 }

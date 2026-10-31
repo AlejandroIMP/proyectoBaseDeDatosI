@@ -21,7 +21,7 @@ class PersonController extends ResourceController
             'name' => ['required', 'string', 'max:50'],
             'document_type' => ['required', 'in:DPI,PASSPORT'],
             'document_number' => ['required', 'string', 'max:25', Rule::unique('people', 'document_number')->ignore($record)],
-            'email' => ['required', 'email', 'max:150'],
+            'email' => ['required', 'email', 'max:150', Rule::unique('people', 'email')->ignore($record)],
             'current_pets_count' => ['sometimes', 'integer', 'min:0'],
             'estado_civil' => ['required', 'string', 'max:50'],
             'cantidad_hijos' => ['required', 'integer', 'min:0', 'max:99'],

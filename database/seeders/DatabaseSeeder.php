@@ -40,7 +40,6 @@ class DatabaseSeeder extends Seeder
 
             // Mascotas y su información asociada
             PetSeeder::class,
-            PetHistorySeeder::class,
             PetTreatmentSeeder::class,
 
             // Procesos operativos
@@ -50,6 +49,9 @@ class DatabaseSeeder extends Seeder
             AdoptionFollowUpSeeder::class,
             DonationSeeder::class,
             ContractSeeder::class,
+
+            // Al final: cierra el historial de cada mascota con su estado definitivo
+            PetHistorySeeder::class,
         ]);
     }
 }

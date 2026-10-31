@@ -51,7 +51,12 @@ new #[Layout('layouts.app')] #[Title('Mascotas')] class extends CrudComponent
             'speciesOptions' => Species::query()->orderBy('name')->get(),
             'breeds' => Breed::query()->where('species_id', $this->form['species_id'] ?? null)->orderBy('name')->get(),
             'colors' => Color::query()->orderBy('name')->get(),
-            'petStatuses' => PetStatus::query()->orderBy('name')->get(),
+            // Reservado y Adoptado los asigna el flujo de solicitudes; la mascota editada conserva el suyo.
+            'petStatuses' => PetStatus::query()
+                ->whereNotIn('name', PetStatus::WORKFLOW)
+                ->orWhere('id', $this->form['pet_status_id'] ?? null)
+                ->orderBy('name')
+                ->get(),
             'shelters' => Shelter::query()->orderBy('name')->get(),
         ];
     }

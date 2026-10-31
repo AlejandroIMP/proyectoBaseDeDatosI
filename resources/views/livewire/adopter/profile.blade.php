@@ -57,6 +57,12 @@ new #[Layout('layouts.app')] #[Title('Mis datos de adoptante')] class extends Co
             'form.current_pets_count' => 'mascotas actuales',
         ])['form'];
 
+        if (Person::query()->where('email', $user->email)->whereKeyNot($person?->getKey())->exists()) {
+            $this->addError('form.document_number', 'Ya existe una persona registrada con tu correo. Contacta al refugio.');
+
+            return;
+        }
+
         Person::updateOrCreate(
             ['user_id' => $user->id],
             [...$validated, 'name' => mb_substr($user->name, 0, 50), 'email' => $user->email],

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Color;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ColorController extends ResourceController
 {
@@ -15,7 +16,7 @@ class ColorController extends ResourceController
     {
         return [
             'hex_color' => ['nullable', 'string', 'max:10'],
-            'name' => ['required', 'string', 'max:50'],
+            'name' => ['required', 'string', 'max:50', Rule::unique('colors', 'name')->ignore($record)],
         ];
     }
 }

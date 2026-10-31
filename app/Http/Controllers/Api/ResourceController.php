@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 abstract class ResourceController extends Controller
@@ -94,7 +94,7 @@ abstract class ResourceController extends Controller
     {
         $data = $request->validate($this->rules($request, null));
 
-        $record = $this->model::query()->create([...$this->defaults($request), ...$data]);
+        $record = DB::transaction(fn () => $this->model::query()->create([...$this->defaults($request), ...$data]));
 
         return response()->json($record->refresh()->load($this->with), 201);
     }
@@ -108,7 +108,9 @@ abstract class ResourceController extends Controller
             $this->rules($request, $record)
         );
 
-        $record->update($request->validate($rules));
+        $data = $request->validate($rules);
+
+        DB::transaction(fn () => $record->update($data));
 
         return response()->json($record->refresh()->load($this->with));
     }

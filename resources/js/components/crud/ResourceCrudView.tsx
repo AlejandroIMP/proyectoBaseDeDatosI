@@ -28,6 +28,7 @@ export interface ResourceCrudViewProps<T extends { id: number }> {
     onTransformPayload?: (data: any) => any;
     filterShelter?: boolean;
     initialParams?: Record<string, any>;
+    readOnly?: boolean;
 }
 
 export function ResourceCrudView<T extends { id: number }>({
@@ -40,6 +41,7 @@ export function ResourceCrudView<T extends { id: number }>({
     onTransformPayload,
     filterShelter = false,
     initialParams = {},
+    readOnly = false,
 }: ResourceCrudViewProps<T>) {
     const [activeShelterId, setActiveShelterId] = useState<number>(() => {
         if (!filterShelter) return 0;
@@ -243,7 +245,7 @@ export function ResourceCrudView<T extends { id: number }>({
         );
     });
 
-    const fullColumns: Column<T>[] = [
+    const fullColumns: Column<T>[] = readOnly ? columns : [
         ...columns,
         {
             header: 'Acciones',
@@ -289,10 +291,12 @@ export function ResourceCrudView<T extends { id: number }>({
                         <Download className="h-4 w-4 text-emerald-700" />
                         <span>Exportar CSV</span>
                     </Button>
-                    <Button onClick={handleOpenCreate} className="flex-1 sm:flex-none justify-center flex items-center gap-1.5 py-2 sm:py-1.5">
-                        <Plus className="h-4 w-4 mr-0.5" />
-                        Nuevo Registro
-                    </Button>
+                    {!readOnly && (
+                        <Button onClick={handleOpenCreate} className="flex-1 sm:flex-none justify-center flex items-center gap-1.5 py-2 sm:py-1.5">
+                            <Plus className="h-4 w-4 mr-0.5" />
+                            Nuevo Registro
+                        </Button>
+                    )}
                 </div>
             </div>
 

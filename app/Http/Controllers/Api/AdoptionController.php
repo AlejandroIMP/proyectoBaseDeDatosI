@@ -27,12 +27,13 @@ class AdoptionController extends ResourceController
         $adoption = $record instanceof Adoption ? $record : null;
         $requestedAt = $request->input('requested_at') ?: $adoption?->requested_at?->toDateString();
         $approvedAt = $request->input('approved_at') ?: $adoption?->approved_at?->toDateString();
+        $deliveredAt = $request->input('delivered_at') ?: $adoption?->delivered_at?->toDateString();
 
         return [
             'pet_id' => ['required', 'integer', 'exists:pets,id', $this->petAdoptable($adoption)],
             'person_id' => ['required', 'integer', 'exists:people,id'],
-            'requested_at' => ['required', 'date', 'before_or_equal:today'],
-            'approved_at' => ['nullable', 'date', 'before_or_equal:today', ...($requestedAt ? ['after_or_equal:'.$requestedAt] : [])],
+            'requested_at' => ['required', 'date', 'before_or_equal:today', ...(($approvedAt ?: $deliveredAt) ? ['before_or_equal:'.($approvedAt ?: $deliveredAt)] : [])],
+            'approved_at' => ['nullable', 'date', 'before_or_equal:today', ...($requestedAt ? ['after_or_equal:'.$requestedAt] : []), ...($deliveredAt ? ['before_or_equal:'.$deliveredAt] : [])],
             'delivered_at' => ['nullable', 'date', 'before_or_equal:today', ...(($approvedAt ?: $requestedAt) ? ['after_or_equal:'.($approvedAt ?: $requestedAt)] : [])],
             'notes' => ['nullable', 'string'],
             'document' => ['nullable', 'string', 'max:255'],
@@ -47,8 +48,14 @@ class AdoptionController extends ResourceController
     private function petAdoptable(?Adoption $adoption): Closure
     {
         return function (string $attribute, mixed $value, Closure $fail) use ($adoption) {
-            if ((int) $value !== $adoption?->pet_id && ! Pet::query()->available()->whereKey($value)->exists()) {
+            if ((int) $value === $adoption?->pet_id) {
+                return;
+            }
+
+            if (! Pet::query()->available()->whereKey($value)->exists()) {
                 $fail('La mascota no es elegible para adopción.');
+            } elseif ($adoption?->holds_pet && Adoption::query()->holding()->where('pet_id', $value)->exists()) {
+                $fail('La mascota ya tiene otra adopción aprobada o entregada.');
             }
         };
     }

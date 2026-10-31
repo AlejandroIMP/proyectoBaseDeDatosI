@@ -19,6 +19,7 @@ use Database\Seeders\PermissionSeeder;
 use Database\Seeders\PetStatusSeeder;
 use Database\Seeders\RoleSeeder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Laravel\Sanctum\Sanctum;
 use Livewire\Volt\Volt;
 
@@ -57,8 +58,8 @@ function makeProfile(User $user): Person
         'document_number' => fake()->unique()->numerify('#############'),
         'estado_civil' => 'Soltero(a)',
         'cantidad_hijos' => 0,
-        'occupation_id' => Occupation::create(['name' => 'Docente', 'formalidad' => 'Formal', 'horarios' => 'Diurno'])->id,
-        'residence_id' => Residence::create(['name' => 'Casa', 'animal_limit' => 3])->id,
+        'occupation_id' => Occupation::firstOrCreate(['name' => 'Docente'], ['formalidad' => 'Formal', 'horarios' => 'Diurno'])->id,
+        'residence_id' => Residence::firstOrCreate(['name' => 'Casa'], ['animal_limit' => 3])->id,
         'income' => 5000,
     ]);
 }
@@ -232,7 +233,7 @@ test('deleting an approved adoption releases the pet', function () {
 test('a pet in a non adoptable status cannot be approved', function () {
     $pet = makePet('Rocky');
     $adoption = makeRequest($this->adopter, $pet);
-    $pet->update(['pet_status_id' => PetStatus::where('name', 'Fallecido')->value('id')]);
+    $pet->update(['pet_status_id' => PetStatus::where('name', 'En cuarentena')->value('id')]);
 
     Volt::actingAs(makeAdmin())->test('adoption-requests.index')
         ->call('select', $adoption->id)
@@ -241,21 +242,144 @@ test('a pet in a non adoptable status cannot be approved', function () {
         ->assertSee('no es elegible');
 
     expect($adoption->fresh()->adoptionStatus->name)->toBe(AdoptionStatus::PENDING)
-        ->and($pet->fresh()->petStatus->name)->toBe('Fallecido');
+        ->and($pet->fresh()->petStatus->name)->toBe('En cuarentena');
 });
 
-test('an approved pet that dies cannot be delivered but the request can be rejected', function () {
+test('a pet that dies closes its open requests but keeps delivered ones', function () {
+    $pet = makePet('Rocky');
+    $approved = makeRequest($this->adopter, $pet);
+    $approved->moveTo(AdoptionStatus::APPROVED);
+
+    $other = makePet('Luna');
+    $delivered = makeRequest(makeAdopter(), $other);
+    $delivered->moveTo(AdoptionStatus::APPROVED);
+    $delivered->moveTo(AdoptionStatus::DELIVERED);
+
+    $deceased = PetStatus::where('name', PetStatus::DECEASED)->value('id');
+    $pet->update(['pet_status_id' => $deceased]);
+    $other->fresh()->update(['pet_status_id' => $deceased]);
+
+    expect($approved->fresh()->adoptionStatus->name)->toBe(AdoptionStatus::REJECTED)
+        ->and($approved->fresh()->holds_pet)->toBeFalse()
+        ->and($delivered->fresh()->adoptionStatus->name)->toBe(AdoptionStatus::DELIVERED)
+        ->and($delivered->fresh()->holds_pet)->toBeTrue();
+});
+
+test('the pets form cannot assign workflow statuses', function () {
+    $pet = makePet('Rocky');
+
+    Volt::actingAs(makeAdmin())->test('pets.index')
+        ->call('edit', $pet->id)
+        ->assertDontSee('Reservado')
+        ->set('form.pet_status_id', PetStatus::where('name', PetStatus::RESERVED)->value('id'))
+        ->call('save')
+        ->assertHasErrors('form.pet_status_id');
+
+    expect($pet->fresh()->petStatus->name)->toBe(PetStatus::AVAILABLE);
+});
+
+test('the pets form keeps the status of a held pet unless it dies', function () {
     $pet = makePet('Rocky');
     $adoption = makeRequest($this->adopter, $pet);
     $adoption->moveTo(AdoptionStatus::APPROVED);
-    $pet->update(['pet_status_id' => PetStatus::where('name', 'Fallecido')->value('id')]);
 
-    expect(fn () => $adoption->moveTo(AdoptionStatus::DELIVERED))->toThrow(DomainException::class);
+    Volt::actingAs(makeAdmin())->test('pets.index')
+        ->call('edit', $pet->id)
+        ->set('form.notes', 'Sigue reservado')
+        ->call('save')
+        ->assertHasNoErrors()
+        ->call('edit', $pet->id)
+        ->set('form.pet_status_id', PetStatus::where('name', 'En tratamiento')->value('id'))
+        ->call('save')
+        ->assertHasErrors('form.pet_status_id')
+        ->set('form.pet_status_id', PetStatus::where('name', PetStatus::DECEASED)->value('id'))
+        ->call('save')
+        ->assertHasNoErrors();
 
-    $adoption->moveTo(AdoptionStatus::REJECTED);
+    expect($pet->fresh()->petStatus->name)->toBe(PetStatus::DECEASED);
+});
 
-    expect($adoption->fresh()->adoptionStatus->name)->toBe(AdoptionStatus::REJECTED)
-        ->and($pet->fresh()->petStatus->name)->toBe('Fallecido');
+test('a reserved pet without an adoption can be fixed from the form', function () {
+    $pet = makePet('Rocky', PetStatus::RESERVED);
+
+    Volt::actingAs(makeAdmin())->test('pets.index')
+        ->call('edit', $pet->id)
+        ->set('form.pet_status_id', PetStatus::where('name', PetStatus::AVAILABLE)->value('id'))
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect($pet->fresh()->petStatus->name)->toBe(PetStatus::AVAILABLE);
+});
+
+test('every status change is written to the history with its author', function () {
+    $admin = makeAdmin();
+    $pet = makePet('Rocky');
+
+    expect($pet->histories()->sole()->notes)->toBe('Ingreso al refugio.');
+
+    $adoption = makeRequest($this->adopter, $pet);
+    $this->actingAs($admin);
+    $adoption->moveTo(AdoptionStatus::APPROVED);
+
+    $last = $pet->histories()->orderByDesc('id')->first();
+
+    expect($pet->histories()->count())->toBe(2)
+        ->and($last->petStatus->name)->toBe(PetStatus::RESERVED)
+        ->and($last->notes)->toBe('Cambio de estado: Disponible → Reservado.')
+        ->and($last->user_id)->toBe($admin->id);
+});
+
+test('the history is read only', function () {
+    $pet = makePet('Rocky');
+    $admin = makeAdmin();
+
+    $this->actingAs($admin)->get('/pet-histories')->assertOk()->assertDontSee('Nuevo');
+
+    Volt::actingAs($admin)->test('pet-histories.index')->call('create')->assertForbidden();
+
+    Sanctum::actingAs($admin);
+    $this->postJson('/api/pet-histories', ['pet_id' => $pet->id])->assertMethodNotAllowed();
+    $this->getJson('/api/pet-histories')->assertOk();
+});
+
+test('the database refuses a second adoption holding the same pet', function () {
+    $pet = makePet('Rocky');
+    makeRequest($this->adopter, $pet, AdoptionStatus::APPROVED);
+
+    expect(fn () => Adoption::create([
+        'pet_id' => $pet->id,
+        'person_id' => makeProfile(makeAdopter())->id,
+        'requested_at' => today(),
+        'adoption_status_id' => AdoptionStatus::where('name', AdoptionStatus::DELIVERED)->value('id'),
+        'user_id' => $this->adopter->id,
+    ]))->toThrow(UniqueConstraintViolationException::class);
+});
+
+test('catalogs refuse duplicated names', function () {
+    Volt::actingAs(makeAdmin())->test('adoption-statuses.index')
+        ->call('create')
+        ->set('form.name', AdoptionStatus::PENDING)
+        ->call('save')
+        ->assertHasErrors('form.name');
+
+    expect(fn () => PetStatus::create(['name' => PetStatus::AVAILABLE]))->toThrow(UniqueConstraintViolationException::class);
+});
+
+test('people refuse a repeated email and the adopter sees why', function () {
+    $taken = makeProfile(makeAdopter());
+    $taken->update(['email' => 'compartido@example.com', 'user_id' => null]);
+    $this->adopter->update(['email' => $taken->email]);
+
+    Volt::actingAs($this->adopter)->test('adopter.profile')
+        ->set('form.document_number', '1234567890101')
+        ->set('form.estado_civil', 'Casado(a)')
+        ->set('form.occupation_id', $taken->occupation_id)
+        ->set('form.residence_id', $taken->residence_id)
+        ->set('form.income', 6000)
+        ->call('save')
+        ->assertHasErrors('form.document_number');
+
+    expect(Person::where('email', $taken->email)->count())->toBe(1);
 });
 
 test('eligibility comes from the status flag, not its name', function () {
@@ -296,7 +420,7 @@ test('the api applies the workflow checks to status changes', function () {
     Sanctum::actingAs(makeAdmin());
     $pet = makePet('Rocky');
     $adoption = makeRequest($this->adopter, $pet);
-    $pet->update(['pet_status_id' => PetStatus::where('name', 'Fallecido')->value('id')]);
+    $pet->update(['pet_status_id' => PetStatus::where('name', 'En cuarentena')->value('id')]);
 
     $this->putJson("/api/adoptions/{$adoption->id}", ['adoption_status_id' => AdoptionStatus::where('name', AdoptionStatus::APPROVED)->value('id')])
         ->assertJsonValidationErrors('adoption_status_id');

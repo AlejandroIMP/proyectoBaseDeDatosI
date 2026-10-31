@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\PetStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PetStatusController extends ResourceController
 {
@@ -14,7 +15,7 @@ class PetStatusController extends ResourceController
     protected function rules(Request $request, ?Model $record): array
     {
         return [
-            'name' => ['required', 'string', 'max:50'],
+            'name' => ['required', 'string', 'max:50', Rule::unique('pet_statuses', 'name')->ignore($record)],
             'is_adoptable' => ['boolean'],
         ];
     }

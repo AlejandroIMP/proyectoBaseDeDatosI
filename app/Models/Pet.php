@@ -13,11 +13,22 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Pet extends Model
 {
     /**
+     * Every status change (workflow, CRUD form or API) goes through these hooks, so the history stays complete.
+     */
+    protected static function booted(): void
+    {
+        static::created(fn (Pet $pet) => $pet->recordStatus('Ingreso al refugio.'));
+        static::updated(fn (Pet $pet) => $pet->applyStatusChange());
+    }
+
+    /**
      * @return array<string, string>
      */
     protected function casts(): array
     {
         return [
+            // sqlsrv returns foreign keys as strings and the status rule compares them strictly
+            'pet_status_id' => 'integer',
             'birth_date' => 'date:Y-m-d',
             'registered_at' => 'date:Y-m-d',
             'weight_kg' => 'decimal:2',
@@ -123,6 +134,14 @@ class Pet extends Model
             ->whereRelation('petStatus', 'is_adoptable', true);
     }
 
+    /**
+     * Whether an approved or delivered adoption holds the pet.
+     */
+    public function isHeld(): bool
+    {
+        return $this->adoptions()->holding()->exists();
+    }
+
     public function isAdoptable(): bool
     {
         return static::query()->available()->whereKey($this->getKey())->exists();
@@ -143,11 +162,42 @@ class Pet extends Model
             default => PetStatus::AVAILABLE,
         };
 
-        $managed = $current?->is_adoptable || in_array($current?->name, [PetStatus::RESERVED, PetStatus::ADOPTED], true);
+        $managed = $current?->is_adoptable || in_array($current?->name, PetStatus::WORKFLOW, true);
 
         if ($managed && $current->name !== $status) {
             $this->update(['pet_status_id' => PetStatus::query()->where('name', $status)->value('id')]);
         }
+    }
+
+    private function applyStatusChange(): void
+    {
+        if (! $this->wasChanged('pet_status_id')) {
+            return;
+        }
+
+        $previous = PetStatus::query()->whereKey($this->getOriginal('pet_status_id'))->value('name');
+        $current = PetStatus::query()->whereKey($this->pet_status_id)->value('name');
+
+        $this->recordStatus("Cambio de estado: {$previous} → {$current}.");
+
+        if ($current === PetStatus::DECEASED) {
+            $this->adoptions()
+                ->whereHas('adoptionStatus', fn (Builder $query) => $query->whereIn('name', AdoptionStatus::OPEN))
+                ->update([
+                    'adoption_status_id' => AdoptionStatus::query()->where('name', AdoptionStatus::REJECTED)->value('id'),
+                    'holds_pet' => false,
+                ]);
+        }
+    }
+
+    private function recordStatus(string $notes): void
+    {
+        $this->histories()->create([
+            'pet_status_id' => $this->pet_status_id,
+            'notes' => $notes,
+            'recorded_at' => today(),
+            'user_id' => auth()->id(),
+        ]);
     }
 
     /**

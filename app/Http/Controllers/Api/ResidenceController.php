@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Residence;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ResidenceController extends ResourceController
 {
@@ -14,7 +15,7 @@ class ResidenceController extends ResourceController
     protected function rules(Request $request, ?Model $record): array
     {
         return [
-            'name' => ['nullable', 'string', 'max:50'],
+            'name' => ['nullable', 'string', 'max:50', Rule::unique('residences', 'name')->ignore($record)],
             'animal_limit' => ['required', 'integer', 'min:0', 'max:32767'],
         ];
     }

@@ -17,7 +17,9 @@ class PetSeeder extends Seeder
 
         $speciesList = Species::with('breeds')->get();
         $colorIds = Color::pluck('id');
-        $petStatusIds = PetStatus::pluck('id');
+        // Reservado y Adoptado los asigna AdoptionSeeder; la mayoria queda disponible para generar solicitudes.
+        $availableStatusId = PetStatus::where('name', PetStatus::AVAILABLE)->value('id');
+        $petStatusIds = PetStatus::whereNotIn('name', PetStatus::WORKFLOW)->pluck('id');
         $shelterIds = Shelter::pluck('id');
 
         $names = [
@@ -42,11 +44,11 @@ class PetSeeder extends Seeder
                 'breed_id' => $breed->id,
                 'sex' => $faker->randomElement(['M', 'F']),
                 'birth_date' => $birthDate->format('Y-m-d'),
-                'estimated_age' => $faker->optional(0.7)->numberBetween(1, 180),
+                'estimated_age' => $faker->optional(0.7)->numberBetween(1, 15),
                 'color_id' => $faker->randomElement($colorIds),
                 'weight_kg' => $faker->optional(0.85)->randomFloat(2, 0.5, 45),
                 'notes' => $faker->optional(0.4)->sentence(10),
-                'pet_status_id' => $faker->randomElement($petStatusIds),
+                'pet_status_id' => $faker->boolean(70) ? $availableStatusId : $faker->randomElement($petStatusIds),
                 'registered_at' => $registeredAt->format('Y-m-d'),
                 'status' => $faker->boolean(90) ? 'active' : 'inactive',
                 'shelter_id' => $faker->randomElement($shelterIds),

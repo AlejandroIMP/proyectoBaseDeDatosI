@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Url;
 use Livewire\Volt\Component;
@@ -56,6 +57,9 @@ abstract class CrudComponent extends Component
      */
     protected array $labels = [];
 
+    /** Listing only: the records are written by the application, not from this page. */
+    protected bool $readOnly = false;
+
     #[Url(except: '')]
     public string $search = '';
 
@@ -73,6 +77,8 @@ abstract class CrudComponent extends Component
 
     public function create(): void
     {
+        abort_if($this->readOnly, 403);
+
         $this->resetValidation();
         $this->editingId = null;
         $this->form = $this->defaults;
@@ -81,6 +87,8 @@ abstract class CrudComponent extends Component
 
     public function edit(int $id): void
     {
+        abort_if($this->readOnly, 403);
+
         $record = $this->findRecord($id);
 
         $this->resetValidation();
@@ -91,6 +99,8 @@ abstract class CrudComponent extends Component
 
     public function save(): void
     {
+        abort_if($this->readOnly, 403);
+
         $record = $this->editingId ? $this->findRecord($this->editingId) : null;
 
         $this->form = array_map(fn ($value) => $value === '' ? null : $value, $this->form);
@@ -106,13 +116,15 @@ abstract class CrudComponent extends Component
 
         $data = $this->persistableData($validated, $record);
 
-        if ($record) {
-            $record->update($data);
-        } else {
-            $record = $this->model::query()->create([...$this->controller()->defaultAttributes($request), ...$data]);
-        }
+        DB::transaction(function () use ($record, $data, $request, $validated) {
+            if ($record) {
+                $record->update($data);
+            } else {
+                $record = $this->model::query()->create([...$this->controller()->defaultAttributes($request), ...$data]);
+            }
 
-        $this->afterSave($record, $validated);
+            $this->afterSave($record, $validated);
+        });
 
         $this->showForm = false;
         session()->flash('status', $this->editingId ? 'Registro actualizado.' : 'Registro creado.');
@@ -120,6 +132,8 @@ abstract class CrudComponent extends Component
 
     public function delete(int $id): void
     {
+        abort_if($this->readOnly, 403);
+
         try {
             $this->findRecord($id)->delete();
             session()->flash('status', 'Registro eliminado.');

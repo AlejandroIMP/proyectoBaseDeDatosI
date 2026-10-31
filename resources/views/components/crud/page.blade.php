@@ -1,4 +1,4 @@
-@props(['title', 'records', 'singular' => 'registro'])
+@props(['title', 'records', 'singular' => 'registro', 'readonly' => false])
 
 <div>
     <header class="bg-white shadow">
@@ -7,7 +7,9 @@
 
             <div class="flex items-center gap-3">
                 <x-text-input wire:model.live.debounce.300ms="search" type="search" placeholder="Buscar..." class="w-full sm:w-64" />
-                <x-primary-button type="button" wire:click="create" class="shrink-0">Nuevo</x-primary-button>
+                @unless ($readonly)
+                    <x-primary-button type="button" wire:click="create" class="shrink-0">Nuevo</x-primary-button>
+                @endunless
             </div>
         </div>
     </header>
@@ -28,7 +30,9 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 {{ $head }}
-                                <th class="px-4 py-3"><span class="sr-only">Acciones</span></th>
+                                @unless ($readonly)
+                                    <th class="px-4 py-3"><span class="sr-only">Acciones</span></th>
+                                @endunless
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100 text-gray-700">
@@ -47,6 +51,7 @@
     </div>
 
     {{-- Modal del formulario de creacion/edicion --}}
+    @unless ($readonly)
     <div x-cloak x-show="$wire.showForm" x-on:keydown.escape.window="$wire.showForm = false" class="fixed inset-0 z-50 overflow-y-auto px-4 py-6 sm:px-0">
         <div x-show="$wire.showForm" x-transition.opacity class="fixed inset-0 bg-gray-500/75" x-on:click="$wire.showForm = false"></div>
 
@@ -67,4 +72,5 @@
             </form>
         </div>
     </div>
+    @endunless
 </div>

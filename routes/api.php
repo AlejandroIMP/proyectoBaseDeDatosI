@@ -94,5 +94,10 @@ Route::middleware('auth:sanctum')->group(function () {
         if (in_array($slug, $publicCatalog, true)) {
             $route->except(['index', 'show']);
         }
+
+        // El historial lo escribe la aplicacion en cada cambio de estado de la mascota.
+        if ($slug === 'pet-histories') {
+            $route->only(['index', 'show']);
+        }
     }
 });

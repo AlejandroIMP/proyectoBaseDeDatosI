@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\DB;
  * @property CarbonInterface|null $approved_at
  * @property CarbonInterface|null $delivered_at
  */
-#[Fillable(['pet_id', 'person_id', 'requested_at', 'approved_at', 'delivered_at', 'notes', 'document', 'adoption_status_id', 'user_id'])]
+#[Fillable(['pet_id', 'person_id', 'requested_at', 'approved_at', 'delivered_at', 'notes', 'document', 'adoption_status_id', 'user_id', 'holds_pet'])]
 class Adoption extends Model
 {
     /**
@@ -38,6 +38,7 @@ class Adoption extends Model
             // sqlsrv returns foreign keys as strings and the workflow compares them strictly
             'pet_id' => 'integer',
             'adoption_status_id' => 'integer',
+            'holds_pet' => 'boolean',
             'requested_at' => 'date:Y-m-d',
             'approved_at' => 'date:Y-m-d',
             'delivered_at' => 'date:Y-m-d',
@@ -99,7 +100,7 @@ class Adoption extends Model
      */
     public function scopeHolding(Builder $query): void
     {
-        $query->whereHas('adoptionStatus', fn (Builder $query) => $query->whereIn('name', AdoptionStatus::HOLDING));
+        $query->where('holds_pet', true);
     }
 
     /**
@@ -179,7 +180,9 @@ class Adoption extends Model
 
         $status = $this->statusName($this->adoption_status_id);
 
-        if (in_array($status, AdoptionStatus::HOLDING, true)) {
+        $this->holds_pet = in_array($status, AdoptionStatus::HOLDING, true);
+
+        if ($this->holds_pet) {
             $this->approved_at ??= today();
         }
 
@@ -194,10 +197,7 @@ class Adoption extends Model
             return;
         }
 
-        $holdsPet = in_array($this->statusName($this->adoption_status_id), AdoptionStatus::HOLDING, true);
-        $heldPet = in_array($this->statusName($this->getOriginal('adoption_status_id')), AdoptionStatus::HOLDING, true);
-
-        if ($holdsPet) {
+        if ($this->holds_pet) {
             // Once the pet is taken the other requests in evaluation cannot succeed.
             static::query()
                 ->where('pet_id', $this->pet_id)
@@ -206,7 +206,7 @@ class Adoption extends Model
                 ->update(['adoption_status_id' => AdoptionStatus::query()->where('name', AdoptionStatus::REJECTED)->value('id')]);
         }
 
-        if ($holdsPet || $heldPet) {
+        if ($this->holds_pet || $this->getOriginal('holds_pet')) {
             $this->syncPets();
         }
     }

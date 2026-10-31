@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\AppointmentType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class AppointmentTypeController extends ResourceController
 {
@@ -14,7 +15,7 @@ class AppointmentTypeController extends ResourceController
     protected function rules(Request $request, ?Model $record): array
     {
         return [
-            'name' => ['required', 'string', 'max:50'],
+            'name' => ['required', 'string', 'max:50', Rule::unique('appointment_types', 'name')->ignore($record)],
         ];
     }
 }

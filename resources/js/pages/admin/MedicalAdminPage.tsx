@@ -314,36 +314,6 @@ export const MedicalAdminPage: React.FC = () => {
         },
     ];
 
-    const historyFields: FieldConfig[] = [
-        {
-            name: 'pet_id',
-            label: 'Mascota Evaluada',
-            type: 'select',
-            required: true,
-            options: petOptions,
-        },
-        {
-            name: 'pet_status_id',
-            label: 'Nuevo Estado Clínico / Condición',
-            type: 'select',
-            required: true,
-            options: petStatusOptions,
-        },
-        {
-            name: 'recorded_at',
-            label: 'Fecha del Registro Clínico',
-            type: 'date',
-            required: true,
-        },
-        {
-            name: 'notes',
-            label: 'Evolución Clínica, Diagnóstico y Observaciones',
-            type: 'textarea',
-            required: true,
-            placeholder: 'Describa el estado de salud, signos vitales, respuesta a tratamientos o cambios de cuarentena...',
-        },
-    ];
-
     const handleTreatmentTransform = (data: any) => ({
         ...data,
         treatment_type_id: data.treatment_type_id ? parseInt(String(data.treatment_type_id), 10) : undefined,
@@ -362,12 +332,6 @@ export const MedicalAdminPage: React.FC = () => {
         pet_id: data.pet_id ? parseInt(String(data.pet_id), 10) : undefined,
         appointment_type_id: data.appointment_type_id ? parseInt(String(data.appointment_type_id), 10) : undefined,
         person_id: data.person_id ? parseInt(String(data.person_id), 10) : undefined,
-    });
-
-    const handleHistoryTransform = (data: any) => ({
-        ...data,
-        pet_id: data.pet_id ? parseInt(String(data.pet_id), 10) : undefined,
-        pet_status_id: data.pet_status_id ? parseInt(String(data.pet_status_id), 10) : undefined,
     });
 
     return (
@@ -468,12 +432,12 @@ export const MedicalAdminPage: React.FC = () => {
                 {activeTab === 'history' && (
                     <ResourceCrudView<PetHistory>
                         title="Bitácora de Historial Clínico de Mascotas"
-                        description="Registro cronológico de diagnósticos, cambios de estado de salud y notas veterinarias."
+                        description="Registro cronológico de los cambios de estado de cada mascota, generado por el sistema."
                         endpoint="pet-histories"
                         columns={historyColumns}
-                        fields={historyFields}
-                        onTransformPayload={handleHistoryTransform}
+                        fields={[]}
                         filterShelter={true}
+                        readOnly
                     />
                 )}
             </div>

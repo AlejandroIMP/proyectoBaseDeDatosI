@@ -16,6 +16,11 @@ class PetStatus extends Model
 
     public const ADOPTED = 'Adoptado';
 
+    public const DECEASED = 'Fallecido';
+
+    /** Statuses only the adoption workflow can assign. */
+    public const WORKFLOW = [self::RESERVED, self::ADOPTED];
+
     /**
      * @return array<string, string>
      */

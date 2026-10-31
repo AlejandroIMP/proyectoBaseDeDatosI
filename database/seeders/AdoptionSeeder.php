@@ -31,7 +31,7 @@ class AdoptionSeeder extends Seeder
             'Cancelada',
         ];
 
-        $pets = Pet::inRandomOrder()->limit(25)->get();
+        $pets = Pet::available()->inRandomOrder()->limit(25)->get();
 
         foreach ($pets as $pet) {
             $statusName = $faker->randomElement($weightedStatuses);
@@ -57,6 +57,7 @@ class AdoptionSeeder extends Seeder
                 'notes' => $faker->optional(0.5)->sentence(10),
                 'document' => $faker->optional(0.6)->passthrough('documents/adoptions/solicitud-'.$pet->id.'.pdf'),
                 'adoption_status_id' => $statuses[$statusName],
+                'holds_pet' => in_array($statusName, AdoptionStatus::HOLDING, true),
                 'user_id' => $faker->randomElement($userIds),
             ]);
 

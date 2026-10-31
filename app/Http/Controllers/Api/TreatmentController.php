@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Models\Treatment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class TreatmentController extends ResourceController
 {
@@ -17,7 +18,7 @@ class TreatmentController extends ResourceController
     protected function rules(Request $request, ?Model $record): array
     {
         return [
-            'name' => ['required', 'string', 'max:100'],
+            'name' => ['required', 'string', 'max:100', Rule::unique('treatments', 'name')->ignore($record)->where('treatment_type_id', $request->integer('treatment_type_id') ?: $record?->getAttribute('treatment_type_id'))],
             'requires_veterinarian' => ['required', 'boolean'],
             'cost' => ['required', 'numeric', 'min:0', 'max:999999.99'],
             'treatment_type_id' => ['required', 'integer', 'exists:treatment_types,id'],
